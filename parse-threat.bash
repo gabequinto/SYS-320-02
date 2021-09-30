@@ -118,3 +118,20 @@ if [[ ${url_filter} ]]
 done
 fi
 
+# Adding Example to parse cisco url 
+# I didn't see a place where you downloaded the file.
+
+# Parse Cisco
+if [[ ${parseCisco} ]]
+then
+	wget https://raw.githubusercontent.com/botherder/targetedthreats/master/targetedthreats.csv -O /tmp/targetedthreats.csv
+	awk '/domain/ {print}' /tmp/targetedthreats.csv | awk -F \" '{print $4}' | sort -u > threats.txt
+	echo 'class-map match-any BAD_URLS' | tee ciscothreats.txt
+	for eachip in $(cat threats.txt)
+	do
+		echo "match protocol http host \"${eachip}\"" | tee -a ciscothreats.txt
+	done
+	rm threats.txt
+	echo 'Cisco URL filters file successfully parsed and created at "ciscothreats.txt"'
+fi
+
