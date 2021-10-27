@@ -1,0 +1,13 @@
+# Storyline : review the security event log
+
+# list all the available windows event logs
+Get-EventLog -List
+# Directory to save files
+$mydir = "C:\Users\gabeq\"
+# Create a prompt to allow user to select the Log to view
+$readLog = Read-Host -Prompt "Please select a log to review from the list above"
+# Find a string from your event logs to search on 
+$searchphrase = Read-Host -Prompt "Please enter in a keyword or phrase to search for" 
+# Print the results for the log 
+Get-EventLog -LogName $readLog -Newest 40 | where {$_.Message -ilike "*$searchphrase*"} | export-csv -NoTypeInformation `
+-Path "$mydir\securityLogs.csv"
