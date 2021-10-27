@@ -1,0 +1,20 @@
+# Storyline: Send an email
+
+# body of the email
+
+$msg = "Hello there."
+
+# echoing to the screen
+write-host -BackgroundColor DarkRed -Foreground White $msg
+
+# Email from address
+
+$email = "gabriel.quinto@mymail.champlain.edu"
+
+# to address
+
+$toEmail = "gabriel.quinto@mymail.champlain.edu"
+
+# Send the email
+
+Send-MailMessage -From $email -To $toEmail -Subject "A Greeting" -Body $msg -SmtpServer 192.168.6.71
