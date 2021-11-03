@@ -1,0 +1,2 @@
+#Storyline: retrieve network adapter config
+Get-WmiObject -Class Win32_NetworkAdapterConfiguration | where {$_.ServiceName -ilike "e1dexpress"} | select DHCP, IP, DNS
