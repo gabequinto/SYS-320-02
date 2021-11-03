@@ -1,0 +1,7 @@
+#storyline : exports list of running processes and services
+# directory to export to
+$mydir = "C:\Users\gabeq\SYS320\week9"
+# exporting running processes
+Get-Process | Select-Object ProcessName, Path, ID | Export-Csv -NoTypeInformation -Path $mydir\process.csv
+# exporting running services
+Get-Service | Select-Object Name | Export-Csv -NoTypeInformation -Path $mydir\services.csv
