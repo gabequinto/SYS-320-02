@@ -1,0 +1,5 @@
+#storyline:Start and stop calculator
+# Starts the Calculator
+Start-Process calc.exe -Wait
+#Stops the calculator
+Stop-Process -Name Calculator
