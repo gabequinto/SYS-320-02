@@ -1,0 +1,102 @@
+# Storyline: view the event logs. Check for a valid log, and print the results
+
+function select_log() {
+    
+    cls
+
+    #list all event logs
+    $theLogs = Get-Service
+    $theLogs | Out-Host
+
+    # Initialize the array to store the logs
+    $arrLog = @('stopped','running')  
+    
+    foreach ($tempLog in $theLogs) {
+
+        # Add each log to the array
+        # NOTE: These are stored in the array as a hashtable in the format:
+        # @{Log=LOGNAME}
+        $arrLog += $tempLog
+    }
+    # Test to be sure our array is being populated 
+    #$arrLog
+
+    # Prompt the user for the log to view or quit. 
+    $readLog = Read-Host -Prompt "Please enter 'all', 'running', 'stopped', or 'q' to quit the program"
+
+    # Check if the user wants to quit.
+    if ($readLog -match "^[qQ]$") {
+        
+        # stop executing the program and close the script
+        break
+    }
+
+    log_check -logToSearch $readLog
+
+} #ends the select_log()
+
+function log_check() {
+
+    # String the user types in within the select_log function
+    Param([string]$logToSearch)
+    # Format the user input 
+    $theLog = "$logToSearch"
+
+    # Search the array for the exact hashtable string
+    if ($arrLog -match $theLog){ 
+
+        write-host -BackgroundColor Green -ForegroundColor white "Please wait, it may take a few moments to retrieve the log entries."
+        sleep 2
+
+
+        # Call the function to view the log
+        view_log -logToSearch $logToSearch
+
+
+
+        } else {
+
+          write-host -BackgroundColor red -ForegroundColor white "The log specified doesn't exist"
+
+          sleep 2
+
+          select_log
+
+        }
+
+} #ends the log_check()
+
+
+
+function view_log() {
+
+    cls
+
+     # String the user types in within the log_check function
+    #Param([string]$logToSearch)
+
+    # Get the logs
+    if ($arrLog -EQ $logToSearch) {
+    Get-Service | where Status -EQ "$logToSearch"
+
+    #Pause the screen and wait until the user is ready to proceed
+    Read-Host -Prompt "Press enter when you are done."
+
+    # Go back to select_log
+    select_log
+
+    } Else {
+
+    Get-Service 
+
+    Read-Host -Prompt "Press enter when you are done."
+
+    select_log  
+
+    }
+
+} #ends thhe view_log()
+
+# Run the select_log as the first function
+
+select_log
