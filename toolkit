@@ -1,0 +1,38 @@
+# prompt for user to choose where to save the data
+$dir = Read-Host -Prompt "Please enter a file location to save the results to"
+
+
+# Gets running proceses and path 
+Get-Process | Select-Object ProcessName, Path | export-csv -NoTypeInformation `
+-Path "$dir\process.csv"
+
+# retrieves all tcp network sockets
+Get-NetTCPConnection -State Listen | Select-Object -Property LocalPort, State | Sort-Object LocalPort | export-csv -NoTypeInformation `
+-Path "$dir\TCPsockets.csv"
+
+
+#Gets all services with path to .exe controlling them
+Get-WmiObject win32_service | select Name, PathName | export-csv -NoTypeInformation `
+-Path "$dir\services.csv"
+
+# retrieves all user account information
+Get-WmiObject -Class Win32_UserAccount |  Select PSComputername, Name, Status, Disabled, AccountType, Lockout, PasswordRequired, PasswordChangeable, SID | export-csv -NoTypeInformation `
+-Path "$dir\userInfo.csv"
+
+# retrieves all network adapter information
+Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IPEnabled=TRUE -ComputerName . |  where {$_.ServiceName -ilike "e1dexpress"} | Select-Object -Property [a-z]* -ExcludeProperty IPX*,WINS* | export-csv -NoTypeInformation `
+-Path "$dir\NetworkAdapterConfig.csv"
+
+#creates a hash for all of the above files
+Get-FileHash -Path (Get-ChildItem "C:\Users\gabeq\incident\*.*" -Recurse -force) | Select-Object -Property Hash,@{Name='Name';Expression={[System.IO.Path]::GetFileName($_.Path)}} | export-csv -NoTypeInformation `
+-Path "C:\Users\gabeq\incident\hashs.csv"
+
+#zip directory
+Compress-Archive -Path C:\Users\gabeq\incident -DestinationPath C:\Users\gabeq\zipped\toolkit.zip
+
+#creates checksum of zipped file
+Get-FileHash -Path C:\Users\gabeq\zipped\toolkit.zip | Select-Object -Property Hash,@{Name='Name';Expression={[System.IO.Path]::GetFileName($_.Path)}} | Add-Content `
+-Path "C:\Users\gabeq\incident\hashs.csv"
+
+
+
