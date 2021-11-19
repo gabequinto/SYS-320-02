@@ -1,0 +1,20 @@
+#Storyline: login to a remote SSH server
+
+#SSHSession -ComputerName '192.168.4.50' -Credential (Get-Credential gabriel.quinto@cyber.local)
+
+while ($True) { 
+    # Add a prompt to run commands
+    $the_cmd = Read-Host -Prompt "Please enter a command"
+
+    # Run command on remote ssh server
+    (Invoke-SSHCommand -index 0 $the_cmd).Output
+
+
+
+
+Set-SCPFile -Computername '192.168.4.50' -Credential (Get-Credential gabriel.quinto@cyber.local) `
+-RemotePath '/home/sys320' -LocalFile 'C:\Users\gabeq\zipped\toolkit'
+
+Invoke-SSHCommand -index 0 'ls -l'
+
+}
